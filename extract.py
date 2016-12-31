@@ -59,11 +59,14 @@ def seperateData(lines):
 
 '''
 Write features to new file
+1. ORGANIZE DATA INTO WINDOWS
+2. EXTRACT FEATURES
+3. WRITE FEAUTRES
 '''
 def writeFeatures(time, axis, fileName):
 
     ###############################################################
-    # 1. ORGANIZE DATA IN WINDOWS
+    # 1. ORGANIZE DATA INTO WINDOWS
     ###############################################################
 
     #CREATE FILE TO WRITE IN
@@ -127,29 +130,39 @@ def writeFeatures(time, axis, fileName):
     #Overall Dict
     i = 1
 
-    #Window
-    w = 0
-
     #upCount and downCount for Up and Down in Data
     upCount = 0
     downCount = 0
+
+    #IS THIS A CYCLE? TURNS TRUE WHEN IT REACHES A PEAK AND ENDS AT HIGHEST PEAK OR LOWEST PEAK
+    cycle = False
+    lastSign = ''
+
+    #TIME VALUES
+    startTime = []
+    endTime = []
+
+    #AXIS VALUES
+    startAxis = []
+    endAxis = []
 
     #FEATURES
     height = 0
     width = 0
     distance = 0
 
-    #WRITE ALL UP AND DOWNS IN Dict+1
+    #WRITE ALL UP AND DOWNS IN WINDOW AND WRITE/EXTRACT FEATURES
     while i in range(len(timeDict)+1):
 
+        #WINDOW NUMBER
         file.write("WINDOW: " + str(i) + "\n")
         file.write("--------------------------------------------\n\n")
 
         #For range in current window
         for w in range(len(timeDict[i])):
 
-            #WRITE PLACE IN WINDOW
-            file.write("--- TIME: " + str(timeDict[i][w]) + " AXIS: " + str(axisDict[i][w]) +"\n")
+            # WRITE PLACE IN WINDOW
+            file.write("- TIME: " + str(timeDict[i][w]) + " AXIS: " + str(axisDict[i][w]) + "\n\n")
 
             #IF NOT LAST IN WINDOW THEN COMPARE
             if(len(axisDict[i]) != w+1 ):
@@ -157,53 +170,121 @@ def writeFeatures(time, axis, fileName):
                 #IF DATA GOES DOWN
                 if(axisDict[i][w] > axisDict[i][w+1]):
 
-                    file.write("DOWN\n")
+                    file.write("POSITION: DOWN\n\n")
 
-                    downCount = 1 + downCount;
+                    downCount = 1 + downCount
 
-                    height = axisDict[i][w] - axisDict[i][w+1]
+                    #COUNT PEAK
+                    # START OF CYCLE
+                    if((lastSign == 'DOWN') & (cycle == False)):
 
-                    #FEAUTRE HEIGHT
-                    file.write("HEIGHT: " + str(height) + "\n")
+                        cycle = True
+
+                        startTime.append(timeDict[i][w - 1])
+                        startAxis.append(axisDict[i][w - 1])
+
+                        file.write("START: " + str(startTime)+"\n\n")
+
+                    # END OF CYCLE
+                    elif(((lastSign == "UP") & (cycle == True))):
+
+                        cycle = False
+
+                        endTime.append(timeDict[i][w])
+                        endAxis.append(axisDict[i][w])
+
+                        file.write("END: " + str(endTime)+"\n\n")
+
+                    # NEW SIGN
+                    lastSign = "DOWN"
 
                 #IF DATA GOES UP
                 elif(axisDict[i][w] < axisDict[i][w+1]):
 
-                    file.write("UP\n")
+                    file.write("POSITION: UP\n\n")
 
-                    upCount = 1 + upCount;
+                    #NUMBER OF UPS
+                    upCount = 1 + upCount
 
-                    height = axisDict[i][w+1] - axisDict[i][w]
+                    #COUNT PEAK
+                    #START OF CYCLE
+                    if((lastSign == 'UP') & (cycle == False)):
 
-                    #FEATURE HEIGHT
-                    file.write("HEIGHT: " + str(height) + "\n")
+                        cycle = True
 
-                #FEATURE WIDTH
-                width = timeDict[i][w+1] - timeDict[i][w]
-                file.write("WIDTH: " + str(width) + "\n")
+                        startTime.append(timeDict[i][w - 1])
+                        startAxis.append(axisDict[i][w - 1])
 
-                #FEATURE DISTANCE = a^2 + b^2 = c^2
-                distance = ((height**2) + (width**2)) ** .5
-                file.write("DISTANCE: " + str(distance) + "\n")
+                    #END OF CYCLE
+                    elif((lastSign == "DOWN") & (cycle == True)):
+
+                        cycle = False
+
+                        endTime.append(timeDict[i][w])
+                        endAxis.append(axisDict[i][w])
+
+                    # NEW SIGN
+                    lastSign = "UP"
+
+            #IF STILL IN CYCLE AND WINDOW HAS ENDED.
+            #LAST POINT BECOMES END
+            elif(cycle == True):
+
+                cycle = False
+
+                endTime.append(timeDict[i][w])
+                endAxis.append(axisDict[i][w])
 
                 file.write("\n")
 
-
-        #WRITE FEATURES EXTRACTED
-        file.write("\nTOTAL UPS AND DOWNS: "+ "\n")
+        #WRITE UPS AND DOWNS EXTRACTED
         file.write("UPS: " + str(upCount) + "\n")
-        file.write("DOWNS: " + str(downCount) + "\n\n")
+        file.write("DOWNS: " + str(downCount) + "\n")
+
+        #WRITE START AND ENDS
+        file.write("\nSTARTS: " + str(startTime) +"\n")
+        file.write("ENDS: " + str(endTime)+"\n")
+
+        #####################################################################
+        # 3. WRITE FEATURES HERE (WRITES WHILE LOOPING THROUGH EACH WINDOW)
+        # USED TO WRITE AND EXTRACT FEATURES AND RESET DATA
+        #####################################################################
+
+        #FOR NUMBER OF CYCLES IN WINDOW
+        for s in range(len(startTime)):
+
+            #EXTRACT HEIGHT
+            height = abs(startAxis[s] - endAxis[s])
+
+            #EXTRACT WIDTH
+            width = endTime[s] - startTime[s]
+
+            #EXTRACT DISTANCE
+            distance = ((height**2) + (width**2)) ** .5
+
+            #WRITE FEATURES
+            file.write("\nHEIGHT [" + str(s+1) + "]: " + str(height) + "\n")
+            file.write("WIDTH [" + str(s+1) + "]: " + str(width) + "\n")
+            file.write("DISTANCE [" + str(s + 1) + "]: " + str(distance) + "\n")
+
         file.write("--------------------------------------------\n")
 
-        #RESET DATA COUNT
+        #RESET DATA COUNT FOR NEXT WINDOW
         upCount = 0;
         downCount = 0;
+        lastSign = ""
+        cycle = False
         height = 0;
         width = 0;
         distance = 0;
 
-        #RESET POSITION IN WINDOW
-        w = 0
+        #RESET START AND END TIME VALUES
+        startTime = []
+        endTime = []
+
+        #RESET START AND END AXIS VALUES
+        startAxis = []
+        endAxis = []
 
         #NEXT WINDOW IN DICTIONARY
         i = i + 1;
