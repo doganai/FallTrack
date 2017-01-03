@@ -183,8 +183,6 @@ def writeFeatures(time, axis, fileName):
                         startTime.append(timeDict[i][w - 1])
                         startAxis.append(axisDict[i][w - 1])
 
-                        file.write("START: " + str(startTime)+"\n\n")
-
                     # END OF CYCLE
                     elif(((lastSign == "UP") & (cycle == True))):
 
@@ -192,8 +190,6 @@ def writeFeatures(time, axis, fileName):
 
                         endTime.append(timeDict[i][w])
                         endAxis.append(axisDict[i][w])
-
-                        file.write("END: " + str(endTime)+"\n\n")
 
                     # NEW SIGN
                     lastSign = "DOWN"
