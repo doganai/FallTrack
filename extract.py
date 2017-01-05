@@ -317,9 +317,10 @@ def writeFeatures(time, axis, fileName):
             avgHeight = totalHeight/len(listHeight)
             avgWidth = totalWidth/len(listWidth)
 
-            #SUBTRACT HIGHEST FROM AVERAGE OF ALL
+            #SUBTRACT AVERAGE FROM HIGHEST OF ALL
             featureHeight = listHeight[0] - avgHeight
-            featureWidth = listWidth[0] - avgWidth
+            #SUBTRACT AVERAGE FROM THE LEAST WIDTH
+            featureWidth = listWidth[-1] - avgWidth
 
             #CONTINUE WRITING FEATURES AT END OF HALF CYCLE
             file.write("HEIGHT FEATURE: " + str(featureHeight) + "\n")
