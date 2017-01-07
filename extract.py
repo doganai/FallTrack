@@ -6,6 +6,7 @@ Uses 50% window overlapping
 '''
 
 from collections import defaultdict
+import numpy
 
 '''
 Open sensor file and extract data from it and write information to new file
@@ -117,7 +118,7 @@ def writeFeatures(time, axis, fileName):
         i = 1 + i
 
     ###############################################################
-    # 2. EXTRACT FEATURES HERE!
+    # 2. EXTRACT FEATURES HERE! THIS PART HANDLES PEAKS
     # Use timeDict and axisDict to compare items
     ###############################################################
 
@@ -125,9 +126,11 @@ def writeFeatures(time, axis, fileName):
     i = 1
 
     #COUNT Peaks in DATA
-    peakCount = 0
+    upPeak = []
+    downPeak = []
 
     #IS THIS A HALF CYCLE? TURNS TRUE WHEN IT REACHES A PEAK AND ENDS AT HIGHEST PEAK OR LOWEST PEAK
+    cycles = 0
     cycle = False
     lastSign = ''
 
@@ -140,13 +143,9 @@ def writeFeatures(time, axis, fileName):
     endAxis = []
 
     #FEATURES
-    height = 0
-    width = 0
-    distance = 0
     listHeight = []
     listWidth = []
-    totalHeight = 0
-    totalWidth = 0
+    listDistance = []
 
     #WRITE ALL UP AND DOWNS IN WINDOW AND WRITE/EXTRACT FEATURES
     while i in range(len(timeDict)+1):
@@ -169,22 +168,26 @@ def writeFeatures(time, axis, fileName):
 
                     file.write("POSITION: DOWN\n\n")
 
-                    #COUNT PEAK
                     # START OF CYCLE
                     if((lastSign == 'DOWN') & (cycle == False)):
 
                         cycle = True
 
+                        # UP PEAK
+                        upPeak.append(timeDict[i][w - 1])
+
                         startTime.append(timeDict[i][w - 1])
                         startAxis.append(axisDict[i][w - 1])
 
-                    # END OF CYCLE
+                    # END OF CYCLE ENDS IN
                     elif(((lastSign == "UP") & (cycle == True))):
 
                         cycle = False
 
-                        # PEAKS FOUND
-                        peakCount = peakCount + 2
+                        cycles = cycles + 1
+
+                        # DOWN PEAK
+                        upPeak.append(timeDict[i][w])
 
                         endTime.append(timeDict[i][w])
                         endAxis.append(axisDict[i][w])
@@ -197,12 +200,13 @@ def writeFeatures(time, axis, fileName):
 
                     file.write("POSITION: UP\n\n")
 
-                    #COUNT PEAK
                     #START OF CYCLE
                     if((lastSign == 'UP') & (cycle == False)):
 
                         # HALF CYCLE STARTS
                         cycle = True
+
+                        downPeak.append(timeDict[i][w - 1])
 
                         startTime.append(timeDict[i][w - 1])
                         startAxis.append(axisDict[i][w - 1])
@@ -213,8 +217,9 @@ def writeFeatures(time, axis, fileName):
                         #HALF CYCLE ENDS
                         cycle = False
 
-                        #PEAKS FOUND
-                        peakCount = peakCount + 2
+                        cycles = cycles + 1
+
+                        downPeak.append(timeDict[i][w])
 
                         endTime.append(timeDict[i][w])
                         endAxis.append(axisDict[i][w])
@@ -233,10 +238,14 @@ def writeFeatures(time, axis, fileName):
                 startTime.pop()
                 startAxis.pop()
 
-                file.write("\n")
+        #REMOVE ALL SAME OCCURENCES
+        upPeak = list(set(upPeak))
+        downPeak = list(set(downPeak))
 
         #WRITE UPS AND DOWNS EXTRACTED
-        file.write("PEAKS: " + str(peakCount) + "\n")
+        file.write("UP PEAKS: " + str(len(upPeak)) + "\n")
+        file.write("DOWN PEAKS: " + str(len(downPeak)) + "\n")
+        file.write("HALF CYCLES: " + str(cycles) + "\n")
 
         #WRITE START AND ENDS
         file.write("\nSTARTS: " + str(startTime) +"\n")
@@ -253,7 +262,6 @@ def writeFeatures(time, axis, fileName):
             #EXTRACT HEIGHT
             height = abs(startAxis[s] - endAxis[s])
 
-            #EXTRACT EXTRA FEATURES FROM HEIGHT
             #GREATEST IS IN FRONT OF LIST
             if((len(listHeight) > 0)):
 
@@ -261,24 +269,17 @@ def writeFeatures(time, axis, fileName):
 
                     listHeight.insert(0, height)
 
-                    totalHeight = height + totalHeight
-
                 elif(listHeight[0] > height):
 
                     listHeight.append(height)
-
-                    totalHeight = height + totalHeight
 
             else:
 
                 listHeight.append(height)
 
-                totalHeight = height + totalHeight
-
             #EXTRACT WIDTH
             width = endTime[s] - startTime[s]
 
-            #EXTRACT EXTRA FEATURES FROM WIDTH
             # GREATEST IS IN FRONT OF LIST
             if(len(listWidth) > 0):
 
@@ -286,22 +287,17 @@ def writeFeatures(time, axis, fileName):
 
                     listWidth.insert(0, width)
 
-                    totalWidth = totalWidth + width
-
                 elif ((listWidth[0] > width)):
 
                     listWidth.append(width)
-
-                    totalWidth = totalWidth + width
 
             else:
 
                 listWidth.append(width)
 
-                totalWidth = totalWidth + width
-
             #EXTRACT DISTANCE
             distance = ((height**2) + (width**2)) ** .5
+            listDistance.append(distance)
 
             #WRITE FEATURES
             file.write("\nHEIGHT [" + str(s+1) + "]: " + str(height) + "\n")
@@ -310,35 +306,69 @@ def writeFeatures(time, axis, fileName):
 
         file.write("\n")
 
-        #HEIGHT AND WIDTH FEATURES
-        if(len(listHeight) > 0):
+        #ADD ALL IN LIST EXCEPT THE FIRST
+        totalHeight = sum(listHeight[1:])
 
-            #AVG OF HEIGHT AND WIDTH
-            avgHeight = totalHeight/len(listHeight)
-            avgWidth = totalWidth/len(listWidth)
+        #ADD ALL IN LIST EXCEPT THE LAST
+        totalWidth = sum(listWidth[:-1])
+
+        #HEIGHT AND WIDTH FEATURES
+        if((len(listHeight)-1 > 0) & (len(listWidth)-1 > 0) ):
+
+            #AVG OF HEIGHT AND WIDTH EXCLUDING THE GREATEST FOR HEIGHT AND THE LEAST FOR WIDTH
+            avgHeight = totalHeight/(len(listHeight)-1)
+            avgWidth = totalWidth/(len(listWidth)-1)
 
             #SUBTRACT AVERAGE FROM HIGHEST OF ALL
             featureHeight = listHeight[0] - avgHeight
             #SUBTRACT AVERAGE FROM THE LEAST WIDTH
             featureWidth = listWidth[-1] - avgWidth
 
+        # LIST MUST BE BIGGER THAN 0
+        if(len(listHeight) > 0):
+
+            # ADD ALL IN LIST
+            totalHeight = sum(listHeight)
+            totalWidth = sum(listWidth)
+            totalDistance = sum(listDistance)
+
+            # GET THE MEAN OF THE VALUES
+            avgHeight = totalHeight / len(listHeight)
+            avgWidth = totalWidth / len(listWidth)
+            # avgDistance is made for further distance analysis
+            avgDistance = totalDistance / len(listDistance)
+
+            # GET SD OF THE VALUES
+            sdHeight = numpy.std(listHeight)
+            sdWidth = numpy.std(listWidth)
+            sdDistance = numpy.std(listDistance)
+
             #CONTINUE WRITING FEATURES AT END OF HALF CYCLE
+            #THIS IS DATA COLLECTED FROM ALL CYCLES
             file.write("HEIGHT FEATURE: " + str(featureHeight) + "\n")
-            file.write("WIDTH FEATURE: " + str(featureWidth) + "\n")
+            file.write("WIDTH FEATURE: " + str(featureWidth) + "\n\n")
+
+            file.write("AVG OF HEIGHT: " + str(avgHeight) + "\n")
+            file.write("AVG OF WIDTH: " + str(avgWidth) + "\n")
+            file.write("AVG OF DISTANCE: " + str(avgDistance) + "\n\n")
+
+            file.write("SD OF HEIGHT: " + str(sdHeight) + "\n")
+            file.write("SD OF WIDTH: " + str(sdWidth) + "\n")
+            file.write("SD OF DISTANCE: " + str(sdDistance) + "\n")
 
         file.write("\n")
         file.write("--------------------------------------------\n")
 
         #RESET DATA COUNT FOR NEXT WINDOW
-        peakCount = 0;
+        upPeak = [];
+        downPeak = [];
         lastSign = "";
         cycle = False;
-        height = 0;
-        width = 0;
+        cycles = 0
         listHeight = []
         listWidth = []
-        totalHeight = 0
-        totalWidth = 0
+        listDistance = []
+
 
         #RESET START AND END TIME VALUES
         startTime = []
