@@ -1,5 +1,6 @@
 # README #
 
+All Rights Reserved.
 
 ### What is this repository for? ###
 
