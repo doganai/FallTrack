@@ -18,7 +18,7 @@ from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 
 '''
-Retrieve file name, gather features for SVM, runSVM
+Retrieve file name, gather features for Classifiers, Retrieve data from Classifiers
 '''
 def main():
 
@@ -33,7 +33,7 @@ def main():
         #GATHER FEATURES AND CLASSES AND INSERT INTO FILE
         X, CF, TestCF, TestX = gatherFeatures(lines, linesTest)
 
-        #NORMALIZE DATA AND RUN THROUGH SVM OBJECT
+        #NORMALIZE DATA AND RUN THROUGH Classifiers
         runClassifiers(X, TestX, TestCF, CF)
 
 '''
