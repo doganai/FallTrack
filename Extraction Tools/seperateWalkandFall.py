@@ -1,5 +1,5 @@
 '''
-Author:
+Author: John Dogan
 Seperate Activity and Fall Data from Raw File Given the time
 '''
 class seperate():
