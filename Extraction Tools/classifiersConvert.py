@@ -17,14 +17,23 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
 
+#MULTICLASS CLASSIFICATION
+# Classes: 1 is Jog, 2 is JogFall, 3 is Walk, 4 is WalkFall, 5 is stand, 6 is standFall,
+# 7 is sit, 8 is sitFall, 9 is lie, 10 is lieFall, 11 is stairUp,
+# 12 is stairUpFall, 13 is stairDown, 14 is stairDownFall
+
+#BINARYCLASS CLASSIFICATION
+#Classes: 1 is NO FALL and 2 is FALL
+
 '''
-Retrieve file name, gather features for Classifiers, Retrieve data from Classifiers
+Retrieve file name, gather features for SVM, runSVM
 '''
 def main():
 
-        featureFile = open("featureFile.txt",'r')
-
-        featureTestFile = open("featureFileTest.txt", 'r')
+        featureFile = input("Enter Training File: ")
+        featureTestFile = input("Enter Test File: ")
+        featureFile = open(featureFile, 'r')
+        featureTestFile = open(featureTestFile, 'r')
 
         lines = featureFile.readlines()
 
@@ -33,7 +42,7 @@ def main():
         #GATHER FEATURES AND CLASSES AND INSERT INTO FILE
         X, CF, TestCF, TestX = gatherFeatures(lines, linesTest)
 
-        #NORMALIZE DATA AND RUN THROUGH Classifiers
+        #NORMALIZE DATA AND RUN THROUGH SVM OBJECT
         runClassifiers(X, TestX, TestCF, CF)
 
 '''
@@ -59,7 +68,18 @@ def gatherFeatures(lines, linesTest):
 
             cfLine = line.split()
 
-            CF.append(cfLine[-1].replace("\n", " "))
+            new = cfLine[-1].replace("\n", " ")
+
+            #CONVERT WITH IF ELSE FOR ODD AND EVEN (ODD IS NON FALL , EVEN IS FALL)
+            #IF EVEN
+            if((int(new) % 2) == 0):
+
+                CF.append(2)
+
+            #IF ODD
+            else:
+
+                CF.append(1)
 
     # TEST FILE
     for lineTest in linesTest:
@@ -72,7 +92,18 @@ def gatherFeatures(lines, linesTest):
 
             cfLine = lineTest.split()
 
-            TestCF.append(cfLine[-1].replace("\n", " "))
+            new = cfLine[-1].replace("\n", " ")
+
+            #CONVERT WITH IF ELSE FOR ODD AND EVEN (ODD IS NON FALL , EVEN IS FALL)
+            #IF EVEN
+            if((int(new) % 2) == 0):
+
+                TestCF.append(2)
+
+            #IF ODD
+            else:
+
+                TestCF.append(1)
 
 
 
@@ -124,7 +155,8 @@ def runClassifiers(listX, listTestX, listTestCF, CF):
     predictedForest = np.array(predictedForest);
 
     #SAVE RESULTS TO DATA.TXT
-    data = open("data.txt", "w")
+    data = open("dataBinaryPocketMag.txt", "w")
+    #data = open("dataMultiAcc.txt", "w")
 
     #WRITE PREDICTED DATA
     data.write("PREDICTIONS FROM TEST DATA (SVC): \n" + str(predictedSVC) + "\n\n")
@@ -133,32 +165,29 @@ def runClassifiers(listX, listTestX, listTestCF, CF):
     data.write("PREDICTIONS FROM TEST DATA: (Decision Tree)\n" + str(predictedTree) + "\n\n")
     data.write("PREDICTIONS FROM TEST DATA: (Random Forest)\n" + str(predictedForest) + "\n\n")
 
-    #Confusion Matrix Table
-    result = confusion_matrix(cfTest, predictedSVC)
-
     #WRITE CONFUSION MATRIX
     data.write("CONFUSION MATRIX (SVC): \n")
-    data.write(str(result) + '\n\n\n\n')
+    data.write(str(confusion_matrix(cfTest, predictedSVC)) + '\n\n\n\n')
     data.write(str(classification_report(listTestCF, predictedSVC)) + '\n')
 
     #WRITE CONFUSION MATRIX
     data.write("CONFUSION MATRIX: (KNN) \n")
-    data.write(str(result) + '\n\n\n')
+    data.write(str(confusion_matrix(cfTest, predictedKNN)) + '\n\n\n')
     data.write(str(classification_report(listTestCF, predictedKNN)) + '\n')
 
     #WRITE CONFUSION MATRIX
     data.write("CONFUSION MATRIX: (BAYES) \n")
-    data.write(str(result) + '\n\n\n')
+    data.write(str(confusion_matrix(cfTest, predictedBayes)) + '\n\n\n')
     data.write(str(classification_report(listTestCF, predictedBayes)) + '\n')
 
     #WRITE CONFUSION MATRIX
     data.write("CONFUSION MATRIX: (Decision Tree) \n")
-    data.write(str(result) + '\n\n\n')
+    data.write(str(confusion_matrix(cfTest, predictedTree)) + '\n\n\n')
     data.write(str(classification_report(listTestCF, predictedTree)) + '\n')
 
     #WRITE CONFUSION MATRIX
     data.write("CONFUSION MATRIX: (Random Forest) \n")
-    data.write(str(result) + '\n\n\n')
+    data.write(str(confusion_matrix(cfTest, predictedForest)) + '\n\n\n')
     data.write(str(classification_report(listTestCF, predictedForest)) + '\n')
 
     #ACCURACY
@@ -177,8 +206,8 @@ def runClassifiers(listX, listTestX, listTestCF, CF):
     data.write("\nACCURACY RANDOM FOREST: " + str(accuracyForest) + "\n\n")
 
 
-
-main()
+if __name__ == '__main__':
+    main()
 
 
 

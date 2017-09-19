@@ -1,3 +1,7 @@
+'''
+Author: John Dogan
+Create Seperate Files from Sensor Data
+'''
 class filemaker():
 
     def __init__(self, filename, new, create):
@@ -17,7 +21,6 @@ class filemaker():
         magFile = open(new+ "magFile_" + filename, 'w')
         gravFile = open(new+ "gravFile_" + filename, 'w')
         linearFile = open(new+ "linearFile_" + filename, 'w')
-        vectorFile = open(new+ "vectorFile_" + filename, 'w')
 
         ##### FOR EVERY LINE IN LIST #####
         for line in win:
@@ -41,7 +44,3 @@ class filemaker():
             elif "LINEAR_ACCELERATION" in line:
 
                 linearFile.write(line)
-
-            elif "ROTATION_VECTOR" in line:
-
-                vectorFile.write(line)

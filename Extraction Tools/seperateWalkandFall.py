@@ -61,34 +61,69 @@ class seperate():
         # When Fall Occurs
         limitMark = times[0] + time
 
+        #FILTERING
+        #REMOVE FIRST SECOND OF DATA
+        removeFirstSecond = times[0] + 1000; #FIRST TIMESTAMP + 1000
+        #REMOVE TIME OF FALL DATE
+        removeAfterFall = 500 #.5 seconds
+        #REMOVE ALL DATA NOT NEEDED AFTER FALL
+        removeAllAfterFall = 1500 #1.5 seconds
+
+        #ALL COUNTS FOR DATA
         count = 0
+        startCount = 0
+        removeFallCount = 0
+        fallCount = 0
 
         # DISPLAY END MARK AND COUNT TILL END MARK
         for i in range(len(times) - 1):
 
             # Limit before setting the endMark for when fall occurs
-            if (times[i] >= limitMark):
+            if (times[i] >= limitMark and count == 0):
 
-                endMark = times[i - 1]
+                endMark = times[i]
+
+                #REMOVE .5 SECOND AFTER FALL (FOR FILTERING)
+                removeAfterFall = endMark + removeAfterFall;
 
                 count = i
 
-                break
+            # Limit to start t seconds after pressing start button mark (FOR FILTERING)
+            elif(times[i] >= removeFirstSecond and startCount == 0):
 
-        for i in range(len(times) - 1):
+                startCount = i
+
+            # After Fall Filtering For t seconds after fall (FOR FILTERING)
+            elif(times[i] >= removeAfterFall and fallCount == 0 and count != 0 and startCount != 0):
+
+                fallCount = i
+
+                removeAllAfterFall = times[i] + removeAllAfterFall
+
+            # For data after fall that needs to be removed (FOR FILTERING)
+            elif(times[i] >= removeAllAfterFall and removeFallCount == 0 and fallCount != 0):
+
+                removeFallCount = i
+
+        #START AFTER 1 SECOND
+        j = startCount
+
+        while j in range(len(times) - 1):
 
             # WRITE TO ALL BEFORE FALL
-            if (i <= count - 1):
+            if (j <= count - 1):
 
                 fileBeforeFall.write(
-                    str(times[i]) + " " + str(sensors[i]) + " " + str(x[i]) + " " + str(y[i]) + " " + str(z[i]) + "\n")
+                    str(times[j]) + " " + str(sensors[j]) + " " + str(x[j]) + " " + str(y[j]) + " " + str(z[j]) + "\n")
 
             # WRITE TO ALL AFTER FALL
-            else:
+            #j is between where fall is filtered and before the rest of the data is cutoff
+            elif(j >= fallCount and j <= removeFallCount-1):
 
                 fileAfterFall.write(
-                    str(times[i]) + " " + str(sensors[i]) + " " + str(x[i]) + " " + str(y[i]) + " " + str(z[i]) + "\n")
+                    str(times[j]) + " " + str(sensors[j]) + " " + str(x[j]) + " " + str(y[j]) + " " + str(z[j]) + "\n")
 
-        print("EndMARK = " + str(endMark))
+            j = j + 1
+
         fileBeforeFall.close()
         fileAfterFall.close()

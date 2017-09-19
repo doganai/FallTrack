@@ -9,11 +9,10 @@ Returns Features for the X, Y, and Z axis
 from collections import defaultdict
 import numpy
 
+'''
+Open sensor file and extract data from it and write information to new file
+'''
 class extract():
-
-    '''
-    Open sensor file and extract data from it and write information to new file
-    '''
 
     allWindowFeaturesX = []
     allWindowFeaturesY = []
@@ -45,6 +44,7 @@ class extract():
     '''
     def getAll(self):
 
+        #RETURN ALL AXIS
         return self.allWindowsFeaturesX, self.allWindowsFeaturesY, self.allWindowsFeaturesZ;
 
     '''
@@ -107,7 +107,7 @@ class extract():
         #NEW WINDOW
         window = 1
         windowStart = time[i]
-        windowSize = 2000 #2 Seconds
+        windowSize = 1500 #1.5 Seconds
         gotAlready = False
         nextWindowStartPosition = i
 
