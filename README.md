@@ -19,4 +19,4 @@ All Rights Reserved.
 
 ### Who do I talk to? ###
 
-l0sm3n@gmail.com - John Dogan
+john@foundationai.org - John Dogan

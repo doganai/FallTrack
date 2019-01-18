@@ -1,5 +1,5 @@
 '''
-Classification File
+Classification File For Specific Axes
 Author: John Dogan
 1. Get File Name and Put features into list
 2. Train Classifiers

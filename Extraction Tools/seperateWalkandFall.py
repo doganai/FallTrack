@@ -65,7 +65,7 @@ class seperate():
         #REMOVE FIRST SECOND OF DATA
         removeFirstSecond = times[0] + 1000; #FIRST TIMESTAMP + 1000
         #REMOVE TIME OF FALL DATE
-        removeAfterFall = 500 #.5 seconds
+        removeAfterFall = .5 #.5 seconds
         #REMOVE ALL DATA NOT NEEDED AFTER FALL
         removeAllAfterFall = 1500 #1.5 seconds
 

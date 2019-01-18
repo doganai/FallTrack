@@ -3,6 +3,7 @@ Author: John Dogan
 Creates graph from raw sensor data.
 Shows user where to cut fall and non fall
 '''
+
 import matplotlib.pyplot as plt
 from filemaker import *
 
@@ -13,15 +14,14 @@ Make sure to refresh directory if needed
 '''
 def main():
 
-    choice = input("Enter 'Y' to enter raw file. To enter sensor file just press Enter: ")
 
-    if choice=="Y":
-        # RAW FILE NEEDED FROM USER
-        filename = input("RAW FILE - ENTER FILE LOCATION TO GRAPH: ")
-        filemaker(filename,"","")
 
-    #RAW FILE NEEDED FROM USER
-    filename = input("Give FILE OF SENSOR TO TEST: ")
+    # RAW FILE NEEDED FROM USER
+    filename = input("RAW FILE - ENTER FILE LOCATION TO GRAPH: ")
+    filemaker(filename,"","")
+
+    #RAW FILE NEEDED FROM USER (READS ACCELEROMETER SENSOR)
+    filename = "accFile_"
 
     file = open(filename, "r")
 

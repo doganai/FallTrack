@@ -115,11 +115,11 @@ def main():
     #FEATURE FILE TO WRITE FROM ANYWHERE
     # 1. MULTI
     #CREATING TRAINING
-    #featuresFileAcc = open("featureFileFilteredMultiAcc.txt", 'a')
-    #featuresFileGrav = open("featureFileFilteredMultiGrav.txt", 'a')
-    #featuresFileGyro = open("featureFileFilteredMultiGyro.txt", 'a')
-    #featuresFileLinear = open("featureFileFilteredMultiLinear.txt", 'a')
-    #featuresFileMag = open("featureFileFilteredMultiMag.txt", 'a')
+    featuresFileAcc = open("featureFileFilteredMultiAcc.txt", 'a')
+    featuresFileGrav = open("featureFileFilteredMultiGrav.txt", 'a')
+    featuresFileGyro = open("featureFileFilteredMultiGyro.txt", 'a')
+    featuresFileLinear = open("featureFileFilteredMultiLinear.txt", 'a')
+    featuresFileMag = open("featureFileFilteredMultiMag.txt", 'a')
     #CREATING TESt
     #featuresFileAcc = open("featureFileTestFilteredMultiAcc.txt", 'a')
     #featuresFileGrav = open("featureFileTestFilteredMultiGrav.txt", 'a')
@@ -134,11 +134,11 @@ def main():
     #featuresFileLinear = open("featureFileFilteredBinaryLinearPocket.txt", 'a')
     #featuresFileMag = open("featureFileFilteredBinaryMagPocket.txt", 'a')
     #CREATING TEST
-    featuresFileAcc = open("featureFileTestFilteredBinaryAccPocket.txt", 'a')
-    featuresFileGrav = open("featureFileTestFilteredBinaryGravPocket.txt", 'a')
-    featuresFileGyro = open("featureFileTestFilteredBinaryGyroPocket.txt", 'a')
-    featuresFileLinear = open("featureFileTestFilteredBinaryLinearPocket.txt", 'a')
-    featuresFileMag = open("featureFileTestFilteredBinaryMagPocket.txt", 'a')
+    #featuresFileAcc = open("featureFileTestFilteredBinaryAccPocket.txt", 'a')
+    #featuresFileGrav = open("featureFileTestFilteredBinaryGravPocket.txt", 'a')
+    #featuresFileGyro = open("featureFileTestFilteredBinaryGyroPocket.txt", 'a')
+    #featuresFileLinear = open("featureFileTestFilteredBinaryLinearPocket.txt", 'a')
+    #featuresFileMag = open("featureFileTestFilteredBinaryMagPocket.txt", 'a')
     # 3. OTHERS
     #FINISH CREATING FILES FOR EACH SENSORS AXIS
     #CREATING TEST

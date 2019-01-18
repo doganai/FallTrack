@@ -1,0 +1,16 @@
+--------------------------------------
+UserFiles contains all collected data from users
+--------------------------------------
+
+Up to 3-4 trials are recorded from each user
+
+    1. All data must be seperated with WalkandFall.py so walk and fall files are seperated.
+
+    2. The program filemaker.py is used to split all sensors into their own files
+
+    3. Extract.py is used to extract all features from data
+
+All written data is stored in package and then can be removed and organized in User directory
+
+main.py controls all file creation user must enter raw file location
+

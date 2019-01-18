@@ -1,5 +1,5 @@
 '''
-Classification File
+Classification File For Binary Classification
 Author: John Dogan
 1. Get File Name and Put features into list
 2. Train Classifiers
@@ -59,7 +59,7 @@ def gatherFeatures(lines, linesTest):
     # TRAINING FILE
     for line in lines:
 
-        featuresLine = line.split()
+        featuresLine = line.split(', ')
 
         #MAKES SURE ALL FEATURE LINES ARE THE SAME SIZE
         if(46 == len(featuresLine)):
@@ -68,23 +68,23 @@ def gatherFeatures(lines, linesTest):
 
             cfLine = line.split()
 
-            new = cfLine[-1].replace("\n", " ")
+            new = cfLine[-1].replace("\n", "")
 
             #CONVERT WITH IF ELSE FOR ODD AND EVEN (ODD IS NON FALL , EVEN IS FALL)
             #IF EVEN
             if((int(new) % 2) == 0):
 
-                CF.append(2)
+                CF.append(1)
 
             #IF ODD
             else:
 
-                CF.append(1)
+                CF.append(2)
 
     # TEST FILE
     for lineTest in linesTest:
 
-        featuresLine = lineTest.split()
+        featuresLine = lineTest.split(', ')
 
         if(46 == len(featuresLine)):
 
@@ -92,18 +92,18 @@ def gatherFeatures(lines, linesTest):
 
             cfLine = lineTest.split()
 
-            new = cfLine[-1].replace("\n", " ")
+            new = cfLine[-1].replace("\n", "")
 
             #CONVERT WITH IF ELSE FOR ODD AND EVEN (ODD IS NON FALL , EVEN IS FALL)
             #IF EVEN
             if((int(new) % 2) == 0):
 
-                TestCF.append(2)
+                TestCF.append(1)
 
             #IF ODD
             else:
 
-                TestCF.append(1)
+                TestCF.append(2)
 
 
 
@@ -155,8 +155,8 @@ def runClassifiers(listX, listTestX, listTestCF, CF):
     predictedForest = np.array(predictedForest);
 
     #SAVE RESULTS TO DATA.TXT
-    data = open("dataBinaryPocketMag.txt", "w")
-    #data = open("dataMultiAcc.txt", "w")
+    #data = open("AccBinaryResultsHand.txt", "w")
+    data = open("dataMultiAcc.txt", "w")
 
     #WRITE PREDICTED DATA
     data.write("PREDICTIONS FROM TEST DATA (SVC): \n" + str(predictedSVC) + "\n\n")
@@ -204,6 +204,8 @@ def runClassifiers(listX, listTestX, listTestCF, CF):
     data.write("\nACCURACY BAYES: " + str(accuracyBayes) + "\n\n")
     data.write("\nACCURACY DECISION TREE: " + str(accuracyTree) + "\n\n")
     data.write("\nACCURACY RANDOM FOREST: " + str(accuracyForest) + "\n\n")
+    
+    #PLOT ROC CURVE
 
 
 if __name__ == '__main__':

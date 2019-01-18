@@ -44,3 +44,4 @@ class filemaker():
             elif "LINEAR_ACCELERATION" in line:
 
                 linearFile.write(line)
+
