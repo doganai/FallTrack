@@ -5,6 +5,7 @@ All Rights Reserved.
 ### What is this repository for? ###
 
 * This is to extract features from Android Sensors
+* We have built a sensor framework that takes you raw X,Y,Z sensor data and extract features that can be inputed into your classifiers.
 * 2.0
 * Uses Python3
 * Have SciKit, NumPy, SciPy installed. For easy use please just install anaconda. 
