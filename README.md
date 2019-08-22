@@ -2,6 +2,8 @@
 
 FallTrak: Open Source Software for Activity Recognition
 
+Research Paper: https://ieeexplore.ieee.org/document/8784089
+
 ### What is this repository for? ###
 
 * This is to extract features from Android Sensors
@@ -19,5 +21,6 @@ FallTrak: Open Source Software for Activity Recognition
 
 
 ### Who do I talk to? ###
-*www.dogan.ai
-*john@dogan.ai - John Dogan
+www.dogan.ai
+
+john@dogan.ai - John Dogan
