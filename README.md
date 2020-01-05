@@ -1,6 +1,6 @@
 # README #
 
-FallTrak: Open Source Software for Activity Recognition
+FallTrak: Software for Activity Recognition
 
 Research Paper: https://ieeexplore.ieee.org/document/8784089
 
