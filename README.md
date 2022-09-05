@@ -1,6 +1,6 @@
 # README #
 
-FallTrak: Software for Activity Recognition
+Fall Track: Software for Activity Recognition and Fall Detection
 
 Research Paper: https://ieeexplore.ieee.org/document/8784089
 
